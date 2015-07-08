@@ -20,8 +20,6 @@ COMPATIBLE_MACHINE_zynq = "zynq"
 
 COMPATIBLE_MACHINE_${MACHINE} = "${MACHINE}"
 
-# # Uncomment this to make device trees. Device trees must be placed in ${THISDIR}/device_trees 
-# FILESEXTRAPATHS_append := "${THISDIR}/device_trees"
-# do_configure_prepend() {
-#     cp ${WORKDIR}/*.dts ${TMPDIR}/work-shared/${MACHINE}/kernel-source/arch/${ARCH}/boot/dts/.
-# }
+require linux-xilinx-configs.inc
+require linux-xilinx-machines.inc
+

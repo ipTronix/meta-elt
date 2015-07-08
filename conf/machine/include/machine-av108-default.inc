@@ -14,7 +14,7 @@ PREFERRED_VERSION_linux-apissys ?= "3.15"
 
 # U-Boot Configuration
 PREFERRED_PROVIDER_virtual/bootloader ??= "u-boot-apissys"
-PREFERRED_VERSION_u-boot-apissys ?= "2014.1"
+PREFERRED_VERSION_u-boot-apissys ?= "1.0"
 
 UBOOT_SUFFIX ?= "img"
 UBOOT_SUFFIX_zynqmp ?= "bin"
