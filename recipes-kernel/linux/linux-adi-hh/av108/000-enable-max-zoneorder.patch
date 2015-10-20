@@ -1,0 +1,21 @@
+commit 1499bc655f9e5c3aa8d96777a0ce25cc616241e6
+Author: dario <dario@iptronix.com>
+Date:   Thu Sep 24 20:45:58 2015 +0200
+
+    enabled MAX_ZONEORDER for all ARM architectures
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 3fdd024..6131e04 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1695,8 +1695,8 @@ config ARCH_WANT_GENERAL_HUGETLB
+ source "mm/Kconfig"
+ 
+ config FORCE_MAX_ZONEORDER
+-	int "Maximum zone order" if ARCH_SHMOBILE_LEGACY
+-	range 11 64 if ARCH_SHMOBILE_LEGACY
++	int "Maximum zone order"
++	range 11 64 
+ 	default "12" if SOC_AM33XX
+ 	default "9" if SA1111 || ARCH_EFM32
+ 	default "11"

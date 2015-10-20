@@ -1,7 +1,7 @@
 Index: git/include/configs/zynq-common.h
 ===================================================================
---- git.orig/include/configs/zynq-common.h	2015-07-08 09:26:47.641391100 +0200
-+++ git/include/configs/zynq-common.h	2015-08-12 19:59:32.099477400 +0200
+--- git.orig/include/configs/zynq-common.h	2015-09-24 16:38:49.885479900 +0200
++++ git/include/configs/zynq-common.h	2015-09-24 16:38:50.929479900 +0200
 @@ -275,8 +275,8 @@
  		"bootm 0x3000000 0x2000000 0x2A00000\0"
  
@@ -15,37 +15,46 @@ Index: git/include/configs/zynq-common.h
  #if defined(CONFIG_CMD_ZYNQ_RSA)
 Index: git/include/configs/zynq_av108.h
 ===================================================================
---- git.orig/include/configs/zynq_av108.h	2015-07-08 09:26:47.641391100 +0200
-+++ git/include/configs/zynq_av108.h	2015-08-12 20:00:06.863477400 +0200
-@@ -44,7 +44,7 @@
+--- git.orig/include/configs/zynq_av108.h	2015-09-24 16:38:49.885479900 +0200
++++ git/include/configs/zynq_av108.h	2015-09-24 21:45:00.777479900 +0200
+@@ -44,7 +44,13 @@
  #define VIDEO_FB_ADRS		0x5000000
  */
  
 -#define CONFIG_ENV_OFFSET	0x6D00000
 +#define CONFIG_ENV_OFFSET	0xFC0000
++#define CONFIG_RBTREE
++#define CONFIG_LZO
++#define CONFIG_CMD_UBI
++#define CONFIG_CMD_UBIFS
++#define CONFIG_CMD_MTDPARTS
++#define CONFIG_MTD_PARTITIONS 
  
  
  
-@@ -57,120 +57,32 @@
+@@ -56,121 +62,45 @@
+ /* Default environment */
  #define CONFIG_EXTRA_ENV_SETTINGS	\
  	"ethaddr=00:0a:35:00:01:22\0"	\
- 	"kernel_image=uImage\0"	\
+-	"kernel_image=uImage\0"	\
 -	"ramdisk_image=uramdisk.image.gz\0"	\
 -	"devicetree_image=devicetree.dtb\0"	\
-+	"ramdisk_image=core-image-minimal-av108.cpio.gz.u-boot\0"	\
-+	"devicetree_image=av108.dtb\0"	\
-+	"bootargs=console=ttyPS0,115200 console=tty0 mtdparts=pl353-nand:2M(fsbl),10M(FPGA),3840k(u-Boot),128k(Env1),128k(Env2),1M(dtb),4M(Linux),10M(Ramdisk),-(User_Data) debug video=HDMI-A-1:1920x1080 vmalloc=384M root=/dev/ram rw ip=:::::eth0:dhcp earlyprintk ;linux,stdout-path =  /amba@0/serial@e0000000 ;\0" \
++	"kernel_image=xlx/uImage\0"	\
++	"ramdisk_image=xlx/elt-rd-image-dev-av108.cpio.gz.u-boot\0"	\
++	"devicetree_image=xlx/av108.dtb\0"	\
++	"bootargs=console=ttyPS0,115200 console=tty0 mtdparts=pl353-nand:2M(fsbl),10M(FPGA),3840k(u-Boot),128k(Env1),128k(Env2),1M(dtb),4M(Linux),10M(Ramdisk),-(User_Data) debug vmalloc=384M root=/dev/ram rw ip=:::::eth0:dhcp earlyprintk ;linux,stdout-path =  /amba@0/serial@e0000000 ; mem=520M \0" \
  	"bitstream_image=system.bit.bin\0"	\
  	"boot_image=BOOT.bin\0"	\
 -	"loadbit_addr=0x100000\0"	\
 -	"loadbootenv_addr=0x2000000\0" \
 -	"kernel_size=0x500000\0"	\
-+	"kernel_size=0x400000\0"	\
- 	"devicetree_size=0x20000\0"	\
+-	"devicetree_size=0x20000\0"	\
 -	"ramdisk_size=0x5E0000\0"	\
 -	"boot_size=0xF00000\0"	\
 -	"fdt_high=0x20000000\0"	\
--	"initrd_high=0x20000000\0"	\
++	"kernel_size=0x400000\0"	\
++	"fdt_high=0x20000000\0"		\
+ 	"initrd_high=0x20000000\0"	\
 -	"bootenv=uEnv.txt\0" \
 -	"loadbootenv=fatload mmc 0 ${loadbootenv_addr} ${bootenv}\0" \
 -	"importbootenv=echo Importing environment from SD ...; " \
@@ -90,14 +99,7 @@ Index: git/include/configs/zynq_av108.h
 -			"fatload usb 0:1 0x30000000 uimage && " \
 -			"bootm 0x30000000 - 0x10000000; " \
 -		"fi\0" \
-+	"ramdisk_size=0xA00000\0"	\
-+	"kernel_loadaddr=0x3000000\0"   \
-+	"dtb_loadaddr=0x2000000\0"      \
-+	"rootfs_loadaddr=0x1000000\0"   \
-+	"dtb_offs=0x1000000\0"          \
-+	"kernel_offs=0x1100000\0"       \
-+	"rootfs_offs=0x1500000\0"       \
- 	"nandboot=echo Copying Linux from NAND flash to RAM... && " \
+-	"nandboot=echo Copying Linux from NAND flash to RAM... && " \
 -		"nand read 0x10000000 0x2C00000 0x100000 && " \
 -		"nand read 0x30000000 0x2D00000 0x4000000 && " \
 -		"bootm 0x30000000 - 0x10000000\0" \
@@ -148,7 +150,15 @@ Index: git/include/configs/zynq_av108.h
 -			"fatload usb 0:1 0x30000000 uimage" \
 -			"bootm 0x30000000 - 0x10000000\0" \
 -		"fi\0" \
--	"nandboot=echo Copying Linux from NAND flash to RAM... && " \
++	"devicetree_size=0x20000\0"	\
++	"ramdisk_size=0xA00000\0"	\
++	"kernel_loadaddr=0x1000000\0"   \
++	"dtb_loadaddr=0x2000000\0"      \
++	"rootfs_loadaddr=0x3000000\0"   \
++	"dtb_offs=0x1000000\0"          \
++	"kernel_offs=0x1100000\0"       \
++	"rootfs_offs=0x1500000\0"       \
+ 	"nandboot=echo Copying Linux from NAND flash to RAM... && " \
 -		"nand read 0x10000000 0x2C00000 0x100000 && " \
 -		"nand read 0x30000000 0x2D00000 0x4000000 && " \
 -		"bootm 0x30000000 - 0x10000000\0"
@@ -161,7 +171,17 @@ Index: git/include/configs/zynq_av108.h
 +		"tftpboot ${kernel_loadaddr} ${kernel_image} && " \
 +		"tftpboot ${dtb_loadaddr} ${devicetree_image} && " \
 +		"tftpboot ${rootfs_loadaddr} ${ramdisk_image} && " \
-+		"bootm 0x3000000 0x2000000 0x1000000\0" 
++		"bootm ${kernel_loadaddr} ${rootfs_loadaddr} ${dtb_loadaddr}\0" \
++	"nandupdate=echo Copying Linux from TFTP to NAND flash ... && " \
++                "tftpboot ${dtb_loadaddr} ${devicetree_image} && " \
++                "nand write ${dtb_loadaddr} ${dtb_offs} ${filesize} && " \
++                "setenv devicetree_size ${filesize} && " \
++ 		"tftpboot ${kernel_loadaddr} ${kernel_image} && " \
++		"nand write ${kernel_loadaddr} ${kernel_offs} ${filesize} && " \
++		"setenv kernel_size ${filesize} && " \
++		"tftpboot ${rootfs_loadaddr} ${ramdisk_image} && " \
++		"nand write ${rootfs_loadaddr} ${rootfs_offs} ${filesize} && " \
++		"setenv ramdisk_size ${filesize}\0" 
  
  #undef CONFIG_SYS_PROMPT
  #define CONFIG_SYS_PROMPT	"av108-boot> "
